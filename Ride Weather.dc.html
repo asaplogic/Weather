@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-66eb92d5-5b22-4caa-8339-551c5da9d34d/styles.css">
+<script src="_ds/modernist-66eb92d5-5b22-4caa-8339-551c5da9d34d/_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--color-bg)}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
+<div style="max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,40px)">
+
+<header style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:20px 0;border-bottom:2px solid var(--color-text)">
+  <div style="display:flex;align-items:baseline;gap:10px">
+    <span style="font-family:var(--font-heading);font-weight:800;font-size:20px;letter-spacing:-0.02em">Headwind</span>
+    <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Ride &amp; run weather</span>
+  </div>
+  <div style="display:flex;gap:0;border:2px solid var(--color-text)">
+    <button onClick="{{ setRide }}" style="font-family:var(--font-heading);font-weight:800;font-size:13px;padding:8px 16px;border:0;cursor:pointer;text-align:left;background:{{ rideBg }};color:{{ rideFg }}">Ride</button>
+    <button onClick="{{ setRun }}" style="font-family:var(--font-heading);font-weight:800;font-size:13px;padding:8px 16px;border:0;border-left:2px solid var(--color-text);cursor:pointer;text-align:left;background:{{ runBg }};color:{{ runFg }}">Run</button>
+  </div>
+</header>
+
+<section style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px 0 20px;border-bottom:2px solid var(--color-divider)">
+  <div style="display:flex;flex-direction:column;gap:4px">
+    <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">{{ dateLine }}</span>
+    <h1 style="margin:0;font-size:clamp(40px,7vw,72px);line-height:0.95;letter-spacing:-0.03em">{{ cityName }}</h1>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <sc-for list="{{ cities }}" as="c" hint-placeholder-count="4">
+      <button onClick="{{ c.pick }}" style="font-family:var(--font-body);font-weight:600;font-size:13px;padding:6px 10px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};cursor:pointer" style-hover="border-color:var(--color-text)">{{ c.name }}</button>
+    </sc-for>
+    <button onClick="{{ locate }}" style="display:flex;align-items:center;gap:6px;font-family:var(--font-body);font-weight:600;font-size:13px;padding:6px 10px;border:1px solid var(--color-text);background:transparent;color:var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+      My location
+    </button>
+  </div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));border-bottom:2px solid var(--color-text)">
+  <div style="background:{{ verdictBg }};color:{{ verdictFg }};padding:clamp(20px,4vw,36px);display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:300px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+      <span style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600">Right now · {{ activityLabel }}</span>
+      <span style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ score }}/100</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:var(--font-heading);font-weight:800;font-size:clamp(64px,11vw,128px);line-height:0.85;letter-spacing:-0.045em">{{ verdict }}</div>
+      <p style="margin:0;font-size:17px;line-height:1.4;max-width:34ch;text-wrap:pretty;font-weight:600">{{ advice }}</p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-left:2px solid var(--color-text)">
+    <div style="padding:20px 24px;border-bottom:2px solid var(--color-divider);border-right:2px solid var(--color-divider);display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Temperature</span>
+      <span style="font-family:var(--font-heading);font-weight:800;font-size:48px;line-height:1;letter-spacing:-0.03em">{{ temp }}</span>
+      <span style="font-size:13px;color:var(--color-neutral-700)">Feels {{ feels }} · {{ condition }}</span>
+    </div>
+    <div style="padding:20px 24px;border-bottom:2px solid var(--color-divider);display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Wind</span>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-family:var(--font-heading);font-weight:800;font-size:48px;line-height:1;letter-spacing:-0.03em">{{ wind }}</span>
+        <div style="width:36px;height:36px;border:2px solid var(--color-text);border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate({{ windRot }}deg)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><line x1="12" y1="20" x2="12" y2="4"></line><polyline points="6 10 12 4 18 10"></polyline></svg>
+        </div>
+      </div>
+      <span style="font-size:13px;color:var(--color-neutral-700)">{{ windUnit }} from {{ windFrom }} · gusts {{ gusts }}</span>
+    </div>
+    <div style="padding:20px 24px;border-right:2px solid var(--color-divider);display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Rain next 3h</span>
+      <span style="font-family:var(--font-heading);font-weight:800;font-size:48px;line-height:1;letter-spacing:-0.03em">{{ rain }}</span>
+      <span style="font-size:13px;color:var(--color-neutral-700)">Humidity {{ humidity }}</span>
+    </div>
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700)">Daylight left</span>
+      <span style="font-family:var(--font-heading);font-weight:800;font-size:clamp(32px,4vw,48px);line-height:1;letter-spacing:-0.03em;white-space:nowrap">{{ daylight }}</span>
+      <span style="font-size:13px;color:var(--color-neutral-700)">Sunset {{ sunset }}</span>
+    </div>
+  </div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:0;border-bottom:2px solid var(--color-divider)">
+  <div style="padding:24px 24px 24px 0;display:flex;flex-direction:column;gap:6px;border-right:2px solid var(--color-divider)">
+    <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700);font-weight:600">Best window today</span>
+    <span style="font-family:var(--font-heading);font-weight:800;font-size:32px;line-height:1.05;letter-spacing:-0.02em">{{ bestWindow }}</span>
+    <span style="font-size:14px;color:var(--color-neutral-700)">{{ bestNote }}</span>
+  </div>
+  <div style="padding:24px;display:flex;flex-direction:column;gap:6px">
+    <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700);font-weight:600">What to wear</span>
+    <span style="font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1.2;letter-spacing:-0.01em;text-wrap:pretty">{{ kit }}</span>
+  </div>
+</section>
+
+<section style="padding:28px 0 48px;display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <h2 style="margin:0;font-size:24px">Next 12 hours</h2>
+    <span style="font-size:12px;color:var(--color-neutral-700)">{{ sourceNote }}</span>
+  </div>
+  <div style="overflow-x:auto;border-top:2px solid var(--color-text)">
+    <div style="display:grid;grid-template-columns:repeat(12,minmax(64px,1fr));min-width:768px">
+      <sc-for list="{{ hours }}" as="h" hint-placeholder-count="12">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:12px 10px 14px;border-right:1px solid var(--color-divider);background:{{ h.bg }}">
+          <span style="font-size:12px;font-weight:600;color:{{ h.labelColor }}">{{ h.time }}</span>
+          <div style="height:72px;display:flex;align-items:flex-end;background:var(--color-surface)">
+            <div style="width:100%;height:{{ h.barPct }}%;background:{{ h.barColor }}"></div>
+          </div>
+          <span style="font-family:var(--font-heading);font-weight:800;font-size:18px;line-height:1">{{ h.temp }}</span>
+          <span style="font-size:12px;color:var(--color-neutral-700);line-height:1.3">{{ h.wind }}<br>{{ h.rain }} rain</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--color-neutral-700)">
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:var(--color-accent)"></span>Great</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:var(--color-text)"></span>Fine</span>
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:var(--color-neutral-400)"></span>Skip</span>
+    <span>Bar height = conditions score</span>
+  </div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;units&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;metric&quot;,&quot;imperial&quot;],&quot;default&quot;:&quot;metric&quot;,&quot;tsType&quot;:&quot;'metric'|'imperial'&quot;}}">
+const CITIES = [
+  { name: 'Portland', lat: 45.52, lon: -122.68 },
+  { name: 'Amsterdam', lat: 52.37, lon: 4.9 },
+  { name: 'Boulder', lat: 40.01, lon: -105.27 },
+  { name: 'London', lat: 51.51, lon: -0.13 },
+];
+const DIRS = ['N','NE','E','SE','S','SW','W','NW'];
+const WMO = c => c === 0 ? 'Clear' : c <= 2 ? 'Partly cloudy' : c === 3 ? 'Overcast' : c <= 48 ? 'Fog' : c <= 57 ? 'Drizzle' : c <= 67 ? 'Rain' : c <= 77 ? 'Snow' : c <= 82 ? 'Showers' : 'Thunderstorm';
+
+function mock() {
+  const now = new Date(); now.setMinutes(0, 0, 0);
+  const t = [], p = [], w = [], g = [], c = [];
+  for (let i = 0; i < 36; i++) {
+    const hr = (now.getHours() + i) % 24;
+    t.push(9 + 8 * Math.sin((hr - 9) / 24 * Math.PI * 2 * 0.9));
+    p.push(i > 7 && i < 11 ? 60 : 8);
+    w.push(10 + (hr > 13 && hr < 18 ? 12 : 3));
+    g.push(w[i] + 9); c.push(i > 7 && i < 11 ? 61 : 2);
+  }
+  const sunset = new Date(now); sunset.setHours(18, 24);
+  return { tz: 'local', current: { temperature_2m: t[0], apparent_temperature: t[0] - 2, wind_speed_10m: w[0], wind_gusts_10m: g[0], wind_direction_10m: 240, weather_code: c[0], relative_humidity_2m: 64 },
+    hourly: { time: t.map((_, i) => new Date(now.getTime() + i * 36e5).toISOString().slice(0, 16)), temperature_2m: t, precipitation_probability: p, wind_speed_10m: w, wind_gusts_10m: g, weather_code: c },
+    daily: { sunset: [sunset.toISOString().slice(0, 16)] }, mock: true };
+}
+
+class Component extends DCLogic {
+  state = { city: 0, activity: 'ride', data: null, live: false, coords: null };
+  componentDidMount() { this.load(); }
+  load(coords) {
+    const c = coords || CITIES[this.state.city];
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,apparent_temperature,wind_speed_10m,wind_gusts_10m,wind_direction_10m,weather_code,relative_humidity_2m&hourly=temperature_2m,precipitation_probability,wind_speed_10m,wind_gusts_10m,weather_code&daily=sunset&forecast_days=2&timezone=auto`;
+    fetch(url).then(r => r.json()).then(d => { if (!d.current) throw 0; this.setState({ data: d, live: true }); })
+      .catch(() => this.setState({ data: mock(), live: false }));
+  }
+  pickCity(i) { this.setState({ city: i, coords: null }, () => this.load()); }
+  locate() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(p => {
+      const coords = { lat: p.coords.latitude, lon: p.coords.longitude };
+      this.setState({ city: -1, coords }, () => this.load(coords));
+    }, () => {});
+  }
+  score(temp, wind, gust, rain, code) {
+    const ride = this.state.activity === 'ride';
+    const [lo, hi] = ride ? [12, 24] : [6, 18];
+    let s = 100;
+    if (temp < lo) s -= (lo - temp) * 4; if (temp > hi) s -= (temp - hi) * 5;
+    const wl = ride ? 14 : 22;
+    if (wind > wl) s -= (wind - wl) * (ride ? 2.5 : 1.5);
+    if (gust > wl + 20) s -= 10;
+    s -= rain * (ride ? 0.6 : 0.4);
+    if (code >= 95) s -= 40;
+    return Math.max(0, Math.min(100, Math.round(s)));
+  }
+  renderVals() {
+    const { data, activity, city, live } = this.state;
+    const imp = this.props.units === 'imperial';
+    const T = v => v == null ? '–' : Math.round(imp ? v * 9 / 5 + 32 : v) + '°';
+    const W = v => Math.round(imp ? v * 0.621 : v);
+    const wu = imp ? 'mph' : 'km/h';
+    const ride = activity === 'ride';
+    const base = {
+      setRide: () => this.setState({ activity: 'ride' }), setRun: () => this.setState({ activity: 'run' }),
+      rideBg: ride ? 'var(--color-text)' : 'transparent', rideFg: ride ? 'var(--color-bg)' : 'var(--color-text)',
+      runBg: !ride ? 'var(--color-text)' : 'transparent', runFg: !ride ? 'var(--color-bg)' : 'var(--color-text)',
+      activityLabel: ride ? 'Bike ride' : 'Run', locate: () => this.locate(),
+      cityName: city === -1 ? 'Your location' : CITIES[city].name,
+      cities: CITIES.map((c, i) => ({ name: c.name, pick: () => this.pickCity(i),
+        bg: i === city ? 'var(--color-text)' : 'transparent', fg: i === city ? 'var(--color-bg)' : 'var(--color-text)',
+        border: i === city ? 'var(--color-text)' : 'var(--color-divider)' })),
+      dateLine: new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }),
+    };
+    if (!data) return { ...base, verdict: '…', advice: 'Loading forecast', score: '–', verdictBg: 'var(--color-surface)', verdictFg: 'var(--color-text)', hours: [], temp: '–', feels: '–', wind: '–', windUnit: wu, rain: '–', daylight: '–' };
+
+    const cur = data.current, H = data.hourly;
+    const off = data.mock ? null : (data.utc_offset_seconds || 0);
+    const P = s => off == null ? new Date(s) : new Date(Date.parse(s + 'Z') - off * 1000);
+    const tzOpt = data.mock || !data.timezone ? {} : { timeZone: data.timezone };
+    let start = H.time.findIndex(t => P(t).getTime() > Date.now() - 36e5);
+    if (start < 0) start = 0;
+    const rain3 = Math.max(...H.precipitation_probability.slice(start, start + 3));
+    const s = this.score(cur.temperature_2m, cur.wind_speed_10m, cur.wind_gusts_10m, rain3, cur.weather_code);
+    const verdict = s >= 75 ? 'Go.' : s >= 50 ? 'OK.' : 'Skip.';
+    const dir = DIRS[Math.round(cur.wind_direction_10m / 45) % 8];
+    const hrs = [];
+    for (let i = start; i < start + 12 && i < H.time.length; i++) {
+      const sc = this.score(H.temperature_2m[i], H.wind_speed_10m[i], H.wind_gusts_10m[i], H.precipitation_probability[i], H.weather_code[i]);
+      hrs.push({ i, sc, d: P(H.time[i]) });
+    }
+    let best = { avg: -1 };
+    for (let k = 0; k + 1 < hrs.length; k++) {
+      const avg = (hrs[k].sc + hrs[k + 1].sc) / 2;
+      if (avg > best.avg) best = { avg, k };
+    }
+    const fmt = d => d.toLocaleTimeString(undefined, { hour: 'numeric', ...tzOpt });
+    const bw = hrs[best.k];
+    const bwEnd = new Date(bw.d.getTime() + 2 * 36e5);
+    const sunset = P(data.daily.sunset[0]);
+    const left = (sunset - Date.now()) / 36e5;
+    const t = cur.apparent_temperature;
+    const kit = ride
+      ? (t < 5 ? 'Thermal jacket, full gloves, overshoes' : t < 12 ? 'Long sleeves, vest, light gloves' : t < 20 ? 'Jersey + arm warmers' : 'Short sleeves, extra water') + (rain3 > 40 ? ', rain shell' : '') + (left < 2 ? ', lights' : '')
+      : (t < 5 ? 'Tights, thermal top, gloves' : t < 12 ? 'Long sleeves, shorts or tights' : t < 20 ? 'T-shirt and shorts' : 'Singlet, cap, hydrate') + (rain3 > 40 ? ', light shell' : '');
+    const windy = cur.wind_speed_10m > (ride ? 14 : 22);
+    const advice = s >= 75 ? `Prime conditions. ${windy ? `Start into the ${dir} wind, ride home with it.` : 'Light wind, dry roads.'}`
+      : s >= 50 ? (rain3 > 40 ? 'Rain likely within 3 hours — keep it short.' : windy ? `Breezy from the ${dir}. Plan a sheltered route.` : 'Rideable, not ideal. Dress for it.')
+      : (rain3 > 50 ? 'Wet roads ahead. Wait for the window below.' : 'Rough out there. Check the best window below.');
+    return { ...base,
+      verdict, advice, score: s,
+      verdictBg: s >= 75 ? 'var(--color-accent)' : s >= 50 ? 'var(--color-text)' : 'var(--color-surface)',
+      verdictFg: s >= 75 ? '#fff' : s >= 50 ? 'var(--color-bg)' : 'var(--color-text)',
+      temp: T(cur.temperature_2m), feels: T(cur.apparent_temperature), condition: WMO(cur.weather_code),
+      wind: W(cur.wind_speed_10m), windUnit: wu, windFrom: dir, gusts: W(cur.wind_gusts_10m), windRot: (cur.wind_direction_10m + 180) % 360,
+      rain: rain3 + '%', humidity: cur.relative_humidity_2m + '%',
+      daylight: left > 0 ? `${Math.floor(left)}h ${Math.round((left % 1) * 60)}m` : 'Dark',
+      sunset: sunset.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', ...tzOpt }),
+      bestWindow: `${fmt(bw.d)} – ${fmt(bwEnd)}`,
+      bestNote: `Score ${Math.round(best.avg)} · ${T(H.temperature_2m[bw.i])}, ${W(H.wind_speed_10m[bw.i])} ${wu} wind, ${H.precipitation_probability[bw.i]}% rain`,
+      kit,
+      sourceNote: live ? 'Live forecast · Open-Meteo' : 'Sample data — live forecast unavailable',
+      hours: hrs.map((h, k) => {
+        const inBest = k === best.k || k === best.k + 1;
+        return { time: k === 0 ? 'Now' : fmt(h.d), temp: T(H.temperature_2m[h.i]),
+          wind: `${W(H.wind_speed_10m[h.i])} ${wu}`, rain: H.precipitation_probability[h.i] + '%',
+          barPct: Math.max(4, h.sc), barColor: h.sc >= 75 ? 'var(--color-accent)' : h.sc >= 50 ? 'var(--color-text)' : 'var(--color-neutral-400)',
+          bg: inBest ? 'var(--color-accent-100)' : 'transparent', labelColor: inBest ? 'var(--color-accent-700)' : 'var(--color-text)' };
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>
